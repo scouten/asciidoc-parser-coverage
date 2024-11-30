@@ -1,0 +1,8 @@
+ignore:
+  - "asg/**"
+  - "process/**"
+  - "sdd/**"
+  - "**.rs"
+  - "spec/**"
+  - "docs/*"
+  - "docs/**/nav-*.adoc"

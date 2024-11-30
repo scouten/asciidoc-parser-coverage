@@ -52,7 +52,7 @@ jobs:
         uses: Swatinem/rust-cache@v2
 
       - name: Run Clippy
-        run: cdd && cargo clippy --all-features --all-targets -- -Dwarnings
+        run: cd sdd && cargo clippy --all-features --all-targets -- -Dwarnings
 
   cargo_fmt:
     name: Enforce Rust code format
@@ -91,7 +91,7 @@ jobs:
       - name: Audit crate dependencies
         uses: EmbarkStudios/cargo-deny-action@v2
         with:
-          manifest-path: sdd
+          manifest-path: sdd/Cargo.toml
           command: check ${{ matrix.checks }}
 
   unused_deps:
@@ -109,4 +109,4 @@ jobs:
         uses: aig787/cargo-udeps-action@v1
         with:
           version: latest
-          args: --all-targets --all-features --manifest-path sdd
+          args: --all-targets --all-features --manifest-path sdd/Cargo.toml

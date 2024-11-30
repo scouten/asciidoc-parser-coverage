@@ -34,7 +34,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: "sdd/temp-coverage.json"
           disable_search: true
-          name: SDD
+          name: Spec coverage
           fail_ci_if_error: true
           verbose: true
 

@@ -15,6 +15,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          submodules: true
+      
+      - name: Update parser to latest main
+        run: cd parser && git checkout main && git pull
 
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable

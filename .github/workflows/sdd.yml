@@ -22,17 +22,15 @@ jobs:
       - name: Cache Rust dependencies
         uses: Swatinem/rust-cache@v2
 
-      - name: Install cargo-llvm-cov
-        uses: taiki-e/install-action@cargo-llvm-cov
     
-      # - name: Generate code coverage
-      #   run: cd sdd && cargo llvm-cov --all-features --lcov --ignore-filename-regex tests --output-path lcov.info
+      - name: Generate spec coverage
+        run: cd sdd && cargo run > spec-coverage.json
 
       - name: Upload code coverage results
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: "sdd/temp-coverage.json"
+          files: "sdd/speccoverage.json"
           disable_search: true
           name: Spec coverage
           fail_ci_if_error: true

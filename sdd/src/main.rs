@@ -2,13 +2,50 @@
 // intended at this time to generalize to any other use case.
 
 // If asciidoc-parser goes well, I may build a more robust version of this at a
-// later time. For now, please excuse the hard-coded settings and Q&D JSON
-// generation.
+// later time. For now, please excuse the hard-coded settings and other shortcuts taken.
+
+use std::collections::HashMap;
+use std::path::Path;
 
 use walkdir::{DirEntry, WalkDir};
 
 fn main() {
-    let mut has_error = false;
+    let mut spec_coverage: HashMap<String, Vec<(String, bool)>> = HashMap::new();
+
+    let rs_files: Vec<DirEntry> = WalkDir::new("../parser/src/tests")
+    .into_iter()
+    .filter_entry(|e| {
+        if let Some(file_name) = e.file_name().to_str() {
+            !file_name.starts_with(".")
+        } else {
+            false
+        }
+    })
+    .filter_map(|e| {
+        let e = e.expect("Directory read error");
+
+        if !e.file_type().is_file() {
+            return None;
+        }
+
+        if let Some(file_name) = e.file_name().to_str() {
+            if file_name.ends_with(".rs") {
+                Some(e)
+            } else {
+                None
+            }
+        } else {
+            None
+        }
+    })
+    .collect();
+
+    for entry in rs_files {
+        let path = entry.path();
+        if let Some((spec_path, cov)) = parse_rs_file(path) {
+            spec_coverage.insert(spec_path, cov);
+        }
+    }
 
     println!("{{\n    \"coverage\": {{");
 
@@ -22,10 +59,12 @@ fn main() {
             }
         })
         .filter_map(|e| {
-            if let Ok(e) = e {
-                if !e.file_type().is_file() {
+            let e = e.expect("Directory read error");
+
+            if !e.file_type().is_file() {
                     return None;
                 }
+
                 if let Some(file_name) = e.file_name().to_str() {
                     if file_name.ends_with(".adoc") {
                         Some(e)
@@ -35,11 +74,6 @@ fn main() {
                 } else {
                     None
                 }
-            } else {
-                eprintln!("DIRECTORY READ ERROR: {e:?}");
-                has_error = true;
-                None
-            }
         })
         .collect();
 
@@ -59,8 +93,8 @@ fn main() {
     }
 
     println!("    }}\n}}");
+}
 
-    if has_error {
-        std::process::exit(1);
-    }
+fn parse_rs_file(_path: &Path) -> Option<(String, Vec<(String, bool)>)> {
+    None
 }

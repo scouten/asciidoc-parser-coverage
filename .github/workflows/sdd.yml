@@ -41,4 +41,3 @@ jobs:
           name: Spec coverage
           fail_ci_if_error: true
           verbose: true
-          root_dir: docs/modules

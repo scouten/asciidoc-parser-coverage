@@ -19,7 +19,7 @@ jobs:
           submodules: true
 
       - name: Update parser to latest main
-        run: cd parser && git checkout main && git pull
+        run: cd parser && git checkout main && git pull && git remote -v
 
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable

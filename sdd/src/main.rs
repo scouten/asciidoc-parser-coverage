@@ -148,11 +148,7 @@ fn parse_rs_file(path: &Path) -> Option<(String, Vec<(String, bool)>)> {
         }
     }
 
-    if let Some(tracked_file) = tracked_file {
-        Some((tracked_file, lines))
-    } else {
-        None
-    }
+    tracked_file.map(|tracked_file| (tracked_file, lines))
 }
 
 fn emit_adoc_coverage(path: &str, coverage: Option<&Vec<(String, bool)>>) {
@@ -181,10 +177,8 @@ fn emit_adoc_coverage(path: &str, coverage: Option<&Vec<(String, bool)>>) {
         }
 
         if let Some((cov_line, is_normative)) = coverage_line {
-            if cov_line == &line {
-                if *is_normative {
-                    output_lines.push(format!("            \"{count}\": 1"));
-                }
+            if cov_line == &line && *is_normative {
+                output_lines.push(format!("            \"{count}\": 1"));
             }
         } else {
             output_lines.push(format!("            \"{count}\": 0"));
@@ -195,7 +189,7 @@ fn emit_adoc_coverage(path: &str, coverage: Option<&Vec<(String, bool)>>) {
         return;
     }
 
-    let last_output_line_index = output_lines.iter().count() - 1;
+    let last_output_line_index = output_lines.len() - 1;
 
     for (count, line) in output_lines.iter().enumerate() {
         if count < last_output_line_index {

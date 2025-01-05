@@ -19,7 +19,13 @@ jobs:
           submodules: true
 
       - name: Update parser to latest main
-        run: cd parser && git checkout main && git pull && git log -1
+        id: update-parser
+        run: |
+          cd parser
+          git checkout main
+          git pull
+          git log -1
+          echo "COMMIT=`git --no-pager log -n 1 --format=%H`" >> $GITHUB_OUTPUT
 
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
@@ -41,3 +47,4 @@ jobs:
           name: Spec coverage
           fail_ci_if_error: true
           verbose: true
+          override_commit: ${{ steps.update-parser.outputs.COMMIT }}
